@@ -13,10 +13,12 @@
         <a-input
           v-model="fromSearchParams.userName"
           placeholder="请输入用户名"
+          allow-clear
         />
       </a-form-item>
       <a-form-item field="userProfile" label="用户简介">
         <a-input
+          allow-clear
           v-model="fromSearchParams.userProfile"
           placeholder="请输入用户简介"
         />
@@ -38,6 +40,9 @@
       }"
       @page-change="onPageChange"
     >
+      <template #createTime="{ record }">
+        {{ dayjs(record.createTime).format("YYYY-MM-DD HH:ss:mm") }}
+      </template>
       <template #userAvatar="{ record }">
         <a-image width="64" :src="record.userAvatar" />
       </template>
@@ -60,6 +65,7 @@ import {
 import { ref, watchEffect } from "vue";
 import API from "@/api";
 import message from "@arco-design/web-vue/es/message";
+import dayjs from "dayjs";
 
 const fromSearchParams = ref<API.UserQueryRequest>({});
 //初始化搜索条件(不应该被修改)
@@ -156,6 +162,7 @@ const columns = [
   {
     title: "createTime",
     dataIndex: "createTime",
+    slotName: "createTime",
   },
   {
     title: "操作",

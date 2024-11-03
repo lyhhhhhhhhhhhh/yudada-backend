@@ -32,11 +32,24 @@ router.beforeEach(async (to, from, next) => {
     ) {
       next(`/user/login?redirect=${to.fullPath}`);
     }
-    //如果已经登录了，判断权限是否足够 如果不足 跳转到无权限页面
-    if (!checkAccess(loginUser, needAccess)) {
+
+    // 检查是否需要多角色判断
+    if (Array.isArray(needAccess)) {
+      //如果当前登录的用户角色不包含在数组当中 则直接返回无权限页面
+      if (!needAccess.includes(loginUser.userRole)) {
+        next("/noAuth");
+        return;
+      }
+      //如果当前登录用户角色与当前页面所需角色不匹配 也返回无权限页面
+    } else if (!checkAccess(loginUser, needAccess)) {
       next("/noAuth");
       return;
     }
+    //如果已经登录了，判断权限是否足够 如果不足 跳转到无权限页面
+    // if (!checkAccess(loginUser, needAccess)) {
+    //   next("/noAuth");
+    //   return;
+    // }
   }
   next();
 });
